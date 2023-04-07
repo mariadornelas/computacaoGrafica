@@ -11,7 +11,7 @@ import {initRenderer,
 let scene, renderer, camera, light, orbit; // Initial variables
 scene = new THREE.Scene();    // Create main scene
 renderer = initRenderer();    // Init a basic renderer
-camera = initCamera(new THREE.Vector3(0, 15, 30)); // Init camera in this position
+camera = initCamera(new THREE.Vector3()); // Init camera in this position
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
 
@@ -128,22 +128,50 @@ paTraseira2.translateX(-7.2);
 paTraseira2.rotateX(THREE.MathUtils.degToRad(90));
 paTraseira2.translateY(-0.8);
 
-
 baseAviao.add( paTraseira2 );
 
-// Use this to show information onscreen
-let controls = new InfoBox();
-  controls.add("Basic Scene");
-  controls.addParagraph();
-  controls.add("Use mouse to interact:");
-  controls.add("* Left button to rotate");
-  controls.add("* Right button to translate (pan)");
-  controls.add("* Scroll to zoom in/out.");
-  controls.show();
+// Camera holder
+const cameraHolderGeometry = new THREE.CylinderGeometry( 1, 1, 1, 32 );
+const cameraHolderMaterial = new THREE.MeshBasicMaterial( {color: 0x6a329f} );
+
+const cameraHolder = new THREE.Mesh( cameraHolderGeometry, cameraHolderMaterial );
+  cameraHolder.position.set(0,-30,-6);
+  let axesHelper2 = new THREE.AxesHelper( 12 );
+  baseAviao.add( axesHelper2 );
+  cameraHolder.add(camera);
+
+baseAviao.add(cameraHolder);
+
+
+// Mouse variables
+let mouseX = 0;
+let mouseY = 0;
+let targetX = 0;
+let targetY = 0;
+const windowHalfX = window.innerWidth / 2;
+const windowHalfY = window.innerHeight / 2;
+document.addEventListener('mousemove', onDocumentMouseMove);
+
+// Listen window size changes
+window.addEventListener('resize', function () { onWindowResize(camera, renderer) }, false);
 
 render();
-function render()
-{
-  requestAnimationFrame(render);
-  renderer.render(scene, camera) // Render scene
+function render() {
+   mouseRotation();
+   requestAnimationFrame(render);
+   renderer.render(scene, camera) // Render scene
+}
+
+function mouseRotation() {
+   targetX = mouseX * .00045;
+   if (cameraHolder) {
+      cameraHolder.rotation.y += 0.05 * (targetX - cameraHolder.rotation.y);
+      baseAviao.translateX(-targetX);
+
+   }
+}
+
+function onDocumentMouseMove(event) {
+   mouseX = (event.clientX - windowHalfX);
+   mouseY = (event.clientY - windowHalfY);
 }
