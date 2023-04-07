@@ -31,7 +31,7 @@ const baseAviaoGeometry = new THREE.CylinderGeometry( 1.2, 0.60, 15, 32 );
 const baseAviaoMaterial = new THREE.MeshBasicMaterial( {color: 0x6a329f} );
 
 const baseAviao = new THREE.Mesh( baseAviaoGeometry, baseAviaoMaterial );
-baseAviao.position.set(0,5,0);
+baseAviao.position.set(0,10,0);
 
 baseAviao.rotateX(THREE.MathUtils.degToRad(90));
 
