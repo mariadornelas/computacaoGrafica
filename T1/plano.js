@@ -16,6 +16,22 @@ light = initDefaultBasicLight(scene); // Create a basic light to illuminate the 
 //orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
 
 
+class Queue {
+  constructor() {
+    this.items = [];
+  }
+  
+  enqueue(element) {
+    this.items.push(element);
+  }
+  
+  dequeue() {
+    return this.items.shift();
+  }
+  
+}
+
+
 function arvore (posx, posy, plane) {
   const basegeometry = new THREE.CylinderGeometry(0.6, 1.6, 8, 32 );
   const basematerial = new THREE.MeshBasicMaterial( {color: 0x4b3621 } );
@@ -62,6 +78,26 @@ function arvore (posx, posy, plane) {
   plane.add( basecylinder );
 }
 
+function plano(){
+
+    console.log("entro no if")
+
+    let plane = createGroundPlaneWired(61.5, 71.5, 10, 10, 3, "blue", "blue")
+
+    for(let i =0; i< aleatorio(4, 8); i++){
+
+      arvore(-aleatorio(35,0),-aleatorio(30,0),plane);
+      arvore(-aleatorio(35,0),aleatorio(30,0),plane);
+      arvore(aleatorio(35,0),-aleatorio(30,0),plane);
+      arvore(aleatorio(35,0),aleatorio(30,0),plane);
+    }
+
+    return plane;
+    
+}
+
+
+
 function aleatorio (max,min){
   return Math.random() * (max - min) + min;
 }
@@ -74,18 +110,6 @@ let axesHelper = new THREE.AxesHelper( 12 );
 scene.add( axesHelper );
 
 // create the ground plane
-let plane = createGroundPlaneWired(60.5, 51.5, 10, 10, 3, "blue", "blue")
-
-for(let i =0; i< aleatorio(4, 8); i++){
-
-  arvore(-aleatorio(25,0),-aleatorio(30,0),plane);
-  arvore(-aleatorio(25,0),aleatorio(30,0),plane);
-  arvore(aleatorio(25,0),-aleatorio(30,0),plane);
-  arvore(aleatorio(25,0),aleatorio(30,0),plane);
-
-}
-
-scene.add(plane);
 
 // Base do avião _ corte de um cilindro 
 const baseAviaoGeometry = new THREE.CylinderGeometry( 1.2, 0.60, 15, 32 );
@@ -216,13 +240,33 @@ baseAviao.translateZ(-5);
 baseAviao.translateX(0);
 baseAviao.translateY(0);
 camera.lookAt(0,0,0);
+
+//const planos = [plano(0), plano(71.5), plano(143), plano(214.5), plano(286)];
+const planos = new Queue();
+for(let i = 0; i<5; i++){
+  let plane = plano();
+  plane.translateY(-(i*71.5));
+  scene.add(plane);
+  planos.enqueue(plane);
+}
+
+
 render();
+
+
 function render()
 {
   mouseRotation();
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
+  if( baseAviao.position.z.toFixed(2) % 71.5 == 0){
+    let aux = planos.dequeue();
+    aux.translateY(-(baseAviao.position.z + 286));
+    console.log(-(baseAviao.position.z + 286))
+    planos.enqueue(aux);
+  }
 }
+
 
 function mouseRotation() {
   targetX = mouseX * .00045;
