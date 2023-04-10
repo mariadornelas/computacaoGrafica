@@ -105,9 +105,6 @@ function plano(){
   
 }
 
-function aleatorio (max,min){
-  return Math.random() * (max - min) + min;
-}
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
@@ -138,7 +135,7 @@ baseAviao.add( frenteAviao );
 
 // Parte de trás do avião 
 const finalAviaoGeometry = new THREE.SphereGeometry( 0.60, 32, 16 );
-const finalAviaoMaterial = new THREE.MeshBasicMaterial( { color: 0xBF0300 } );
+const finalAviaoMaterial = new THREE.MeshBasicMaterial( { color: 0x00000 } );
 
 const finalAviao = new THREE.Mesh( finalAviaoGeometry, finalAviaoMaterial );
 finalAviao.position.set(0, - 7.5 ,0);
@@ -189,7 +186,7 @@ baseAviao.add( asa );
 
 // Cabine 
 const cabineGeometry = new THREE.SphereGeometry( 0.5 , 32 , 16 );
-const cabineMaterial = new THREE.MeshBasicMaterial( { color: 0xBF0300 } );
+const cabineMaterial = new THREE.MeshBasicMaterial( { color: 0x00000 } );
 
 const cabine = new THREE.Mesh( cabineGeometry, cabineMaterial );
 
@@ -286,28 +283,51 @@ function mouseRotation() {
   targetX = mouseX * .003;
 
   if(baseAviao.position.x >= 30){
+
     baseAviao.translateX(0);
     baseAviao.translateY(0.1);
+
     if(targetX > 0){
 
       baseAviao.translateX(-targetX);
       baseAviao.translateY(0.1);
-      
      
     }
+
   }
   else{ 
+
     if(baseAviao.position.x <= - 30){
+
       baseAviao.translateX(0);
       baseAviao.translateY(0.1);
+
       if(targetX < 0){
+
         baseAviao.translateX(-targetX);
         baseAviao.translateY(0.1);
+        
+
       }
     }
+
     else{
+
       baseAviao.translateX(-targetX);
       baseAviao.translateY(0.1);
+
+      if(targetX > 0){
+
+        asa.rotateX(THREE.MathUtils.degToRad(0.15));
+        paTraseira.rotateX(THREE.MathUtils.degToRad(0.15));
+        paTraseira2.rotateX(THREE.MathUtils.degToRad(0.15));
+        
+      }
+      else{
+        asa.rotateX(THREE.MathUtils.degToRad(-0.15));
+        paTraseira.rotateX(THREE.MathUtils.degToRad(-0.15));
+        paTraseira2.rotateX(THREE.MathUtils.degToRad(-0.15));
+      }
     }
   }
 }
