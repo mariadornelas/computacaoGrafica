@@ -16,6 +16,7 @@ light = initDefaultBasicLight(scene); // Create a basic light to illuminate the 
 //orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
 
 
+// Cria a fila para adicionar novos planos e retirar os planos do início
 class Queue {
   constructor() {
     this.items = [];
@@ -31,6 +32,7 @@ class Queue {
   
 }
 
+// --------------------------------- Criação das árvores -------------------------------------------//
 
 function arvore (posx, posy, plane) {
   const basegeometry = new THREE.CylinderGeometry(0.6, 1.6, 8, 32 );
@@ -78,11 +80,17 @@ function arvore (posx, posy, plane) {
   plane.add( basecylinder );
 }
 
+// ------------------ Setando a criação das árvores de forma aleatória no mapa ---------------------//
+
+function aleatorio (max,min){
+  return Math.random() * (max - min) + min;
+}
+
 function plano(){
 
     console.log("entro no if")
 
-    let plane = createGroundPlaneWired(61.5, 71.5, 10, 10, 3, "blue", "blue")
+    let plane = createGroundPlaneWired(61.5, 71.5, 10, 10, 3, "#90ee90", "#90ee90")
 
     for(let i =0; i< aleatorio(4, 8); i++){
 
@@ -96,12 +104,6 @@ function plano(){
     
 }
 
-
-
-function aleatorio (max,min){
-  return Math.random() * (max - min) + min;
-}
-
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
@@ -109,7 +111,7 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 let axesHelper = new THREE.AxesHelper( 12 );
 scene.add( axesHelper );
 
-// create the ground plane
+// ------------------------------------- Criação do avião ---------------------------------------------//
 
 // Base do avião _ corte de um cilindro 
 const baseAviaoGeometry = new THREE.CylinderGeometry( 1.2, 0.60, 15, 32 );
@@ -213,7 +215,8 @@ paTraseira2.translateY(-0.8);
 
 baseAviao.add( paTraseira2 );
 
-// Camera holder
+// --------------------------------- Criação do Camera holder ----------------------------------------- //
+
 const cameraHolderGeometry = new THREE.CylinderGeometry( 1, 1, 1, 32 );
 const cameraHolderMaterial = new THREE.MeshBasicMaterial( {color: 0x6a329f} );
 
@@ -227,7 +230,8 @@ baseAviao.add(cameraHolder);
 
 scene.add( baseAviao );
 
-// Mouse variables
+// -------------------------------- Criação das variáveis do Mouse ---------------------------------- //
+
 let mouseX = 0;
 let mouseY = 0;
 let targetX = 0;
@@ -240,6 +244,9 @@ baseAviao.translateZ(-5);
 baseAviao.translateX(0);
 baseAviao.translateY(0);
 camera.lookAt(0,0,0);
+
+// ------------------------------ Criação da Dinâmica do ambiente ----------------------------------- //
+
 
 //const planos = [plano(0), plano(71.5), plano(143), plano(214.5), plano(286)];
 const planos = new Queue();
@@ -259,10 +266,11 @@ function render()
   mouseRotation();
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
-  if( baseAviao.position.z.toFixed(2) % 71.5 == 0){
+
+  if(baseAviao.position.z.toFixed(2) % 71.5 == 0){
     let aux = planos.dequeue();
     aux.translateY(-(baseAviao.position.z + 286));
-    console.log(-(baseAviao.position.z + 286))
+    console.log(-(baseAviao.position.z + 0))
     planos.enqueue(aux);
   }
 }
