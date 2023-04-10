@@ -78,6 +78,7 @@ function arvore (posx, posy, plane) {
   basecylinder.position.set(posy, posx , 2.0 )
 
   plane.add( basecylinder );
+
 }
 
 // ------------------ Setando a criação das árvores de forma aleatória no mapa ---------------------//
@@ -93,7 +94,7 @@ function plano(){
   let w = window.innerWidth;
   let plane = createGroundPlaneWired(w, 71.5, 10, 10, 3, "lightgreen", "lightgreen")
 
-  for(let i =0; i< aleatorio(20, 40); i++){
+  for(let i =0; i< aleatorio(50, 60); i++){
 
     arvore(-aleatorio(35,0),-aleatorio((w/2),0),plane);
     arvore(-aleatorio(35,0),aleatorio((w/2),0),plane);
@@ -105,9 +106,9 @@ function plano(){
   
 }
 
-function aleatorio (max,min){
-  return Math.random() * (max - min) + min;
-}
+// function aleatorio (max,min){
+//   return Math.random() * (max - min) + min;
+// }
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
@@ -117,6 +118,7 @@ let axesHelper = new THREE.AxesHelper( 12 );
 scene.add( axesHelper );
 
 // ------------------------------------- Criação do avião ---------------------------------------------//
+
 
 // Base do avião _ corte de um cilindro 
 const baseAviaoGeometry = new THREE.CylinderGeometry( 1.2, 0.60, 15, 32 );
@@ -274,9 +276,10 @@ function render()
 
   if(baseAviao.position.z.toFixed(2) % 71.5 == 0){
     let aux = planos.dequeue();
-    aux.translateY(-(baseAviao.position.z + 286));
+    aux.translateY(-(357.5));
     console.log(-(baseAviao.position.z + 0))
     planos.enqueue(aux);
+
   }
 }
 
