@@ -111,9 +111,6 @@ function plano(op){
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-// Show axes (parameter is size of each axis)
-let axesHelper = new THREE.AxesHelper( 12 );
-scene.add( axesHelper );
 
 // ------------------------------------- Criação do avião ---------------------------------------------//
 
@@ -189,7 +186,7 @@ baseAviao.add( asa );
 
 // Cabine 
 const cabineGeometry = new THREE.SphereGeometry( 0.5 , 32 , 16 );
-const cabineMaterial = setDefaultMaterial("rgb(255,0,0)");
+const cabineMaterial = new THREE.MeshBasicMaterial( { color: 0x00000 } );
 
 const cabine = new THREE.Mesh( cabineGeometry, cabineMaterial );
 
@@ -227,8 +224,6 @@ const cameraHolderMaterial = setDefaultMaterial("rgb(106, 50, 159)");
 
 const cameraHolder = new THREE.Mesh( cameraHolderGeometry, cameraHolderMaterial );
   cameraHolder.position.set(0,-50,-6);
-  let axesHelper2 = new THREE.AxesHelper( 12 );
-  baseAviao.add( axesHelper2 );
   cameraHolder.add(camera);
 
 baseAviao.add(cameraHolder);
@@ -267,7 +262,8 @@ render();
 
 function render()
 {
-  mouseRotation();
+  mouseTranslationX();
+  mouseTranslationY();
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
 
@@ -281,59 +277,97 @@ function render()
 }
 
 
-function mouseRotation() {
+// ------------------------------ Dinâmica da movimentação do avião ----------------------------------- //
+
+
+function mouseTranslationX() { //Fução responsável pela translação no eixo x 
 
   targetX = mouseX * .003;
 
   if(baseAviao.position.x >= 30){
 
     baseAviao.translateX(0);
-    baseAviao.translateY(0.1);
 
     if(targetX > 0){
 
       baseAviao.translateX(-targetX);
-      baseAviao.translateY(0.1);
      
     }
 
   }
+
   else{ 
 
     if(baseAviao.position.x <= - 30){
 
       baseAviao.translateX(0);
-      baseAviao.translateY(0.1);
 
       if(targetX < 0){
 
         baseAviao.translateX(-targetX);
+
+      }
+
+    }
+
+    else{
+
+      baseAviao.translateX(-targetX);
+      //Movimentação de rotação doa vião no eixo Z (da tela)
+      asa.rotateX(THREE.MathUtils.degToRad(targetX*0.3));
+      paTraseira.rotateX(THREE.MathUtils.degToRad(targetX*0.3));
+      paTraseira2.rotateX(THREE.MathUtils.degToRad(targetX*0.3));
+
+    }
+  }
+}
+
+function mouseTranslationY() { // Função responsável pela translação no eixo y do avião (velocidade constante para frente) e no eixo y da tela (eixo z do avião)
+
+  targetY = mouseY * .003;
+
+  if(baseAviao.position.y > 20){ 
+
+    baseAviao.translateZ(0); 
+    baseAviao.translateY(0.1);
+
+    if(targetY > 0){
+
+      baseAviao.translateZ(targetY);
+      baseAviao.translateY(0.1);
+
+    }
+  }
+
+  else{
+
+    if(baseAviao.position.y <  5){
+
+      baseAviao.translateZ(0);
+      baseAviao.translateY(0.1);
+
+      if(targetY > 0){
+
+        baseAviao.translateZ(-targetY);
         baseAviao.translateY(0.1);
-        
 
       }
     }
 
     else{
 
-      baseAviao.translateX(-targetX);
-      baseAviao.translateY(0.1);
+        baseAviao.translateZ(targetY);
+        baseAviao.translateY(0.1);
 
-      if(targetX > 0){
+        if(baseAviao.position.y <  5)
+          baseAviao.position.y =  5
 
-        asa.rotateX(THREE.MathUtils.degToRad(0.15));
-        paTraseira.rotateX(THREE.MathUtils.degToRad(0.15));
-        paTraseira2.rotateX(THREE.MathUtils.degToRad(0.15));
-        
-      }
-      else{
-        asa.rotateX(THREE.MathUtils.degToRad(-0.15));
-        paTraseira.rotateX(THREE.MathUtils.degToRad(-0.15));
-        paTraseira2.rotateX(THREE.MathUtils.degToRad(-0.15));
-      }
     }
+
   }
+  
 }
+
 
 function onDocumentMouseMove(event) {
   mouseX = (event.clientX - windowHalfX);
