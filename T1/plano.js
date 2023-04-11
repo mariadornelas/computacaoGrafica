@@ -87,20 +87,18 @@ function aleatorio (max,min){
   return Math.random() * (max - min) + min;
 }
 
-
-function plano(){
+function plano(op){
 
   let w = window.innerWidth;
   let plane = createGroundPlaneWired(w, 71.5, 10, 10, 3, "lightgreen", "lightgreen")
 
 
-  for(let i =0; i< aleatorio(60, 70); i++){
-
-    arvore(-aleatorio(35,0),-aleatorio((w/2),0),plane, 0.8, true);
-    arvore(-aleatorio(35,0),aleatorio((w/2),0),plane, 0.8, true);
-    arvore(aleatorio(35,0),-aleatorio((w/2),0),plane, 0.8, true);
-    arvore(aleatorio(35,0),aleatorio((w/2),0),plane, 0.8, true);
-  }
+    for(var i =0; i< aleatorio(60, 70); i++){
+        arvore(-aleatorio(35,0),-aleatorio((w/2),0),plane, op, true);
+        arvore(-aleatorio(35,0),aleatorio((w/2),0),plane, op, true);
+        arvore(aleatorio(35,0),-aleatorio((w/2),0),plane, op, true);
+        arvore(aleatorio(35,0),aleatorio((w/2),0),plane, op, true);
+    }
 
   return plane;
   
@@ -258,12 +256,11 @@ camera.lookAt(0,0,0);
 //const planos = [plano(0), plano(71.5), plano(143), plano(214.5), plano(286)];
 const planos = new Queue();
 for(let i = 0; i<5; i++){
-  let plane = plano();
-  plane.translateY(-(i*71.5));
-  scene.add(plane);
-  planos.enqueue(plane);
+    let plane = plano(1);
+    plane.translateY(-(i*71.5));
+    scene.add(plane);
+    planos.enqueue(plane);
 }
-
 
 render();
 
@@ -277,10 +274,10 @@ function render()
   if(baseAviao.position.z.toFixed(2) % 71.5 == 0){
     let aux = planos.dequeue();
     aux.translateY(-(357.5));
-    console.log(-(baseAviao.position.z + 0))
     planos.enqueue(aux);
-
   }
+
+    // Atualizando a opacidade dos objetos de acordo com a distância do avião
 }
 
 
