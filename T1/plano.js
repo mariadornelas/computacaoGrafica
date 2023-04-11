@@ -188,7 +188,7 @@ baseAviao.add( asa );
 
 // Cabine 
 const cabineGeometry = new THREE.SphereGeometry( 0.5 , 32 , 16 );
-const cabineMaterial = setDefaultMaterial("rgb(0,0,0)");
+const cabineMaterial = new THREE.MeshBasicMaterial( { color: 0x00000 } );
 
 const cabine = new THREE.Mesh( cabineGeometry, cabineMaterial );
 
