@@ -14,7 +14,7 @@ renderer = initRenderer();    // Init a basic renderer
 camera = initCamera(new THREE.Vector3()); // Init camera in this position
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 //orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
-
+import { MeshLambertMaterial } from '../build/three.module.js';
 
 // Cria a fila para adicionar novos planos e retirar os planos do início
 class Queue {
@@ -34,13 +34,13 @@ class Queue {
 
 // --------------------------------- Criação das árvores -------------------------------------------//
 
-function arvore (posx, posy, plane) {
+function arvore (posx, posy, plane, opacity, transparent) {
   const basegeometry = new THREE.CylinderGeometry(0.6, 1.6, 8, 32 );
-  const basematerial = new THREE.MeshBasicMaterial( {color: 0x4b3621 } );
+  let basematerial = new THREE.MeshLambertMaterial({color: 0x4b3621, opacity, transparent: true});
   const basecylinder = new THREE.Mesh( basegeometry, basematerial );
   
   // camadas da árvores _ partes de cilindros verdes
-  const folhasmaterial = new THREE.MeshBasicMaterial( {color: 0x006400 } );
+  let folhasmaterial = new THREE.MeshLambertMaterial({color: 0x006400, opacity, transparent: true});
   
   const folhasgeometry1 = new THREE.CylinderGeometry(0.6, 1.6, 2, 32 );
   
@@ -78,6 +78,7 @@ function arvore (posx, posy, plane) {
   basecylinder.position.set(posy, posx , 2.0 )
 
   plane.add( basecylinder );
+
 }
 
 // ------------------ Setando a criação das árvores de forma aleatória no mapa ---------------------//
@@ -86,38 +87,39 @@ function aleatorio (max,min){
   return Math.random() * (max - min) + min;
 }
 
-function plano(){
 
-  console.log("entro no if")
+function plano(){
 
   let w = window.innerWidth;
   let plane = createGroundPlaneWired(w, 71.5, 10, 10, 3, "lightgreen", "lightgreen")
 
-  for(let i =0; i< aleatorio(20, 40); i++){
 
-    arvore(-aleatorio(35,0),-aleatorio((w/2),0),plane);
-    arvore(-aleatorio(35,0),aleatorio((w/2),0),plane);
-    arvore(aleatorio(35,0),-aleatorio((w/2),0),plane);
-    arvore(aleatorio(35,0),aleatorio((w/2),0),plane);
+  for(let i =0; i< aleatorio(60, 70); i++){
+
+    arvore(-aleatorio(35,0),-aleatorio((w/2),0),plane, 0.8, true);
+    arvore(-aleatorio(35,0),aleatorio((w/2),0),plane, 0.8, true);
+    arvore(aleatorio(35,0),-aleatorio((w/2),0),plane, 0.8, true);
+    arvore(aleatorio(35,0),aleatorio((w/2),0),plane, 0.8, true);
   }
 
   return plane;
   
 }
 
+// function aleatorio (max,min){
+//   return Math.random() * (max - min) + min;
+// }
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-// Show axes (parameter is size of each axis)
-let axesHelper = new THREE.AxesHelper( 12 );
-scene.add( axesHelper );
 
 // ------------------------------------- Criação do avião ---------------------------------------------//
 
+
 // Base do avião _ corte de um cilindro 
 const baseAviaoGeometry = new THREE.CylinderGeometry( 1.2, 0.60, 15, 32 );
-const baseAviaoMaterial = new THREE.MeshBasicMaterial( {color: 0xE8E8E8} );
+const baseAviaoMaterial = setDefaultMaterial("rgb(255,255,255)");
 
 const baseAviao = new THREE.Mesh( baseAviaoGeometry, baseAviaoMaterial );
 baseAviao.position.set(0,4,0);
@@ -126,7 +128,7 @@ baseAviao.rotateX(THREE.MathUtils.degToRad(90));
 
 // Parte da frente do avião 
 const frenteAviaoGeometry = new THREE.SphereGeometry( 1.2, 32, 16 );
-const frenteAviaoMaterial = new THREE.MeshBasicMaterial( { color: 0xBF0300 } );
+const frenteAviaoMaterial = setDefaultMaterial("rgb(0,0,0)");
 
 const frenteAviao = new THREE.Mesh( frenteAviaoGeometry, frenteAviaoMaterial );
 frenteAviao.position.set(0, 7.5 ,0);
@@ -135,7 +137,7 @@ baseAviao.add( frenteAviao );
 
 // Parte de trás do avião 
 const finalAviaoGeometry = new THREE.SphereGeometry( 0.60, 32, 16 );
-const finalAviaoMaterial = new THREE.MeshBasicMaterial( { color: 0x00000 } );
+const finalAviaoMaterial = setDefaultMaterial("rgb(0,0,0)");
 
 const finalAviao = new THREE.Mesh( finalAviaoGeometry, finalAviaoMaterial );
 finalAviao.position.set(0, - 7.5 ,0);
@@ -144,7 +146,7 @@ baseAviao.add( finalAviao );
 
 // Hélices do avião _ Semi-esfera 
 const frenteAviaoGeometry2 = new THREE.SphereGeometry( 0.2, 32, 16 );
-const frenteAviaoMaterial2 = new THREE.MeshBasicMaterial( { color: 0xBF0300 } );
+const frenteAviaoMaterial2 = setDefaultMaterial("rgb(255,0,0)");
 
 const frenteAviao2 = new THREE.Mesh( frenteAviaoGeometry2, frenteAviaoMaterial2 );
 frenteAviao2.position.set(0, 8.70 ,0);
@@ -153,7 +155,7 @@ baseAviao.add( frenteAviao2 );
 
 // Hélice do avião _ Pás
 const pasGeometry = new THREE.SphereGeometry( 0.08, 32, 16 );
-const pasMaterial = new THREE.MeshBasicMaterial( { color: 0xBF0300 } );
+const pasMaterial = setDefaultMaterial("rgb(255,0,0)");
 
 const pas1 = new THREE.Mesh( pasGeometry, pasMaterial );
 pas1.rotateX(THREE.MathUtils.degToRad(90));
@@ -174,7 +176,7 @@ frenteAviao2.add( pas3 );
 
 // Asa do avião 
 const asaGeometry = new THREE.SphereGeometry( 0.6, 32, 16 );
-const asaMaterial = new THREE.MeshBasicMaterial( { color: 0xBF0300 } );
+const asaMaterial = setDefaultMaterial("rgb(255,0,0)");
 
 const asa = new THREE.Mesh( asaGeometry, asaMaterial );
 
@@ -186,7 +188,7 @@ baseAviao.add( asa );
 
 // Cabine 
 const cabineGeometry = new THREE.SphereGeometry( 0.5 , 32 , 16 );
-const cabineMaterial = new THREE.MeshBasicMaterial( { color: 0x00000 } );
+const cabineMaterial = setDefaultMaterial("rgb(0,0,0)");
 
 const cabine = new THREE.Mesh( cabineGeometry, cabineMaterial );
 
@@ -197,7 +199,7 @@ baseAviao.add(cabine);
 
 // Pás traseiras
 const paTraseiraGeometry = new THREE.SphereGeometry( 0.2, 32, 16 );
-const paTraseiraMaterial = new THREE.MeshBasicMaterial( { color: 0xBF0300 } );
+const paTraseiraMaterial = setDefaultMaterial("rgb(255,0,0)");
 
 const paTraseira = new THREE.Mesh( paTraseiraGeometry, paTraseiraMaterial );
 
@@ -220,12 +222,10 @@ baseAviao.add( paTraseira2 );
 // --------------------------------- Criação do Camera holder ----------------------------------------- //
 
 const cameraHolderGeometry = new THREE.CylinderGeometry( 1, 1, 1, 32 );
-const cameraHolderMaterial = new THREE.MeshBasicMaterial( {color: 0x6a329f} );
+const cameraHolderMaterial = setDefaultMaterial("rgb(106, 50, 159)");
 
 const cameraHolder = new THREE.Mesh( cameraHolderGeometry, cameraHolderMaterial );
   cameraHolder.position.set(0,-50,-6);
-  let axesHelper2 = new THREE.AxesHelper( 12 );
-  baseAviao.add( axesHelper2 );
   cameraHolder.add(camera);
 
 baseAviao.add(cameraHolder);
@@ -265,72 +265,112 @@ render();
 
 function render()
 {
-  mouseRotation();
+  mouseTranslationX();
+  mouseTranslationY();
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
 
   if(baseAviao.position.z.toFixed(2) % 71.5 == 0){
     let aux = planos.dequeue();
-    aux.translateY(-(baseAviao.position.z + 286));
+    aux.translateY(-(357.5));
     console.log(-(baseAviao.position.z + 0))
     planos.enqueue(aux);
+
   }
 }
 
 
-function mouseRotation() {
+// ------------------------------ Dinâmica da movimentação do avião ----------------------------------- //
+
+
+function mouseTranslationX() { //Fução responsável pela translação no eixo x 
 
   targetX = mouseX * .003;
 
   if(baseAviao.position.x >= 30){
 
     baseAviao.translateX(0);
-    baseAviao.translateY(0.1);
 
     if(targetX > 0){
 
       baseAviao.translateX(-targetX);
-      baseAviao.translateY(0.1);
      
     }
 
   }
+
   else{ 
 
     if(baseAviao.position.x <= - 30){
 
       baseAviao.translateX(0);
-      baseAviao.translateY(0.1);
 
       if(targetX < 0){
 
         baseAviao.translateX(-targetX);
+
+      }
+
+    }
+
+    else{
+
+      baseAviao.translateX(-targetX);
+      //Movimentação de rotação doa vião no eixo Z (da tela)
+      asa.rotateX(THREE.MathUtils.degToRad(targetX*0.3));
+      paTraseira.rotateX(THREE.MathUtils.degToRad(targetX*0.3));
+      paTraseira2.rotateX(THREE.MathUtils.degToRad(targetX*0.3));
+
+    }
+  }
+}
+
+function mouseTranslationY() { // Função responsável pela translação no eixo y do avião (velocidade constante para frente) e no eixo y da tela (eixo z do avião)
+
+  targetY = mouseY * .003;
+
+  if(baseAviao.position.y > 20){ 
+
+    baseAviao.translateZ(0); 
+    baseAviao.translateY(0.1);
+
+    if(targetY > 0){
+
+      baseAviao.translateZ(targetY);
+      baseAviao.translateY(0.1);
+
+    }
+  }
+
+  else{
+
+    if(baseAviao.position.y <  5){
+
+      baseAviao.translateZ(0);
+      baseAviao.translateY(0.1);
+
+      if(targetY > 0){
+
+        baseAviao.translateZ(-targetY);
         baseAviao.translateY(0.1);
-        
 
       }
     }
 
     else{
 
-      baseAviao.translateX(-targetX);
-      baseAviao.translateY(0.1);
+        baseAviao.translateZ(targetY);
+        baseAviao.translateY(0.1);
 
-      if(targetX > 0){
+        if(baseAviao.position.y <  5)
+          baseAviao.position.y =  5
 
-        asa.rotateX(THREE.MathUtils.degToRad(0.15));
-        paTraseira.rotateX(THREE.MathUtils.degToRad(0.15));
-        paTraseira2.rotateX(THREE.MathUtils.degToRad(0.15));
-        
-      }
-      else{
-        asa.rotateX(THREE.MathUtils.degToRad(-0.15));
-        paTraseira.rotateX(THREE.MathUtils.degToRad(-0.15));
-        paTraseira2.rotateX(THREE.MathUtils.degToRad(-0.15));
-      }
     }
+
   }
+  
 }
+
 
 function onDocumentMouseMove(event) {
   mouseX = (event.clientX - windowHalfX);
