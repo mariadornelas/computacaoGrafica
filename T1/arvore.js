@@ -16,8 +16,6 @@ light = initDefaultBasicLight(scene); // Create a basic light to illuminate the 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-
-
 // base da árvore _ cilindro marrom
 const basegeometry = new THREE.CylinderGeometry(0.6, 1.6, 8, 32 );
 const basematerial = new THREE.MeshBasicMaterial( {color: 0x4b3621 } );
